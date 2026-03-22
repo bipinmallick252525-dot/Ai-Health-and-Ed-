@@ -7,7 +7,6 @@ import {
     Plus,
     BarChart3,
     Activity,
-    Settings,
     MoreVertical,
     LogOut,
     Bell,
