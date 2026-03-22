@@ -22,7 +22,7 @@ This is a full-stack application featuring:
 │   ├── contexts/           # Context API providers
 │   └── i18n/               # Internationalization
 ├── ml-service/             # Python ML service for predictions
-├── symptom/                # Python chatbot for symptom checking
+├── symptom/                # openai chatbot for symptom checking
 ├── testsprite_tests/       # Automated test cases
 └── medqueue-edumatch/      # Legacy integration modules
 ```
