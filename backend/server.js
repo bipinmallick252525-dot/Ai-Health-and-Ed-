@@ -13,9 +13,6 @@ const openaiHealth = new OpenAI({
     apiKey: process.env.HEALTH_OPENAI_API_KEY,
 });
 
-const openaiEdu = new OpenAI({
-    apiKey: process.env.EDU_OPENAI_API_KEY,
-});
 
 const twilioClient = twilio(
     process.env.TWILIO_API_KEY_SID,
@@ -156,85 +153,132 @@ function generateRealisticStats(hospitalId, hospitalName) {
 // Initialize hospitals from Google Places API
 async function fetchRealHospitals() {
     const establishedHospitals = [
-        // Delhi NCR
+        // Delhi NCR (Already 8)
         { id: 'aiims-delhi', name: 'AIIMS Delhi', address: 'Ansari Nagar, New Delhi', city: 'Delhi', type: 'Emergency', location: { lat: 28.5672, lng: 77.2100 }, rating: 4.5, totalRatings: 5000 },
         { id: 'apollo-delhi', name: 'Apollo Hospital Delhi', address: 'Sarita Vihar, Delhi', city: 'Delhi', type: 'Emergency', location: { lat: 28.5355, lng: 77.2789 }, rating: 4.4, totalRatings: 3500 },
         { id: 'fortis-delhi', name: 'Fortis Escorts Heart Institute', address: 'Okhla Road, Delhi', city: 'Delhi', type: 'Emergency', location: { lat: 28.5583, lng: 77.2736 }, rating: 4.3, totalRatings: 2200 },
         { id: 'max-delhi', name: 'Max Super Speciality Hospital', address: 'Saket, New Delhi', city: 'Delhi', type: 'Diagnostics', location: { lat: 28.5276, lng: 77.2117 }, rating: 4.2, totalRatings: 1800 },
-        { id: 'moolchand-delhi', name: 'Moolchand Medcity', address: 'Lajpat Nagar, Delhi', city: 'Delhi', type: 'Diagnostics', location: { lat: 28.5645, lng: 77.2345 }, rating: 4.1, totalRatings: 1500 },
         { id: 'ganga-ram-delhi', name: 'Sir Ganga Ram Hospital', address: 'Old Rajinder Nagar, Delhi', city: 'Delhi', type: 'Emergency', location: { lat: 28.6385, lng: 77.1895 }, rating: 4.3, totalRatings: 2600 },
         { id: 'safdarjung-delhi', name: 'Safdarjung Hospital', address: 'Ansari Nagar, Delhi', city: 'Delhi', type: 'Emergency', location: { lat: 28.5668, lng: 77.2078 }, rating: 3.9, totalRatings: 4100 },
-        { id: 'blkapoor-delhi', name: 'BLK Super Speciality Hospital', address: 'Pusa Road, Delhi', city: 'Delhi', type: 'Diagnostics', location: { lat: 28.6445, lng: 77.1802 }, rating: 4.2, totalRatings: 1950 },
 
-        // Mumbai
+        // Maharashtra (Mumbai & Pune)
         { id: 'lilavati-mumbai', name: 'Lilavati Hospital Mumbai', address: 'Bandra West, Mumbai', city: 'Mumbai', type: 'Emergency', location: { lat: 19.0596, lng: 72.8295 }, rating: 4.4, totalRatings: 3100 },
-        { id: 'nanavati-mumbai', name: 'Nanavati Super Speciality Hospital', address: 'Vile Parle, Mumbai', city: 'Mumbai', type: 'Emergency', location: { lat: 19.0965, lng: 72.8395 }, rating: 4.2, totalRatings: 2400 },
         { id: 'kokilaben-mumbai', name: 'Kokilaben Dhirubhai Ambani Hospital', address: 'Andheri West, Mumbai', city: 'Mumbai', type: 'Emergency', location: { lat: 19.1311, lng: 72.8252 }, rating: 4.6, totalRatings: 4500 },
-        { id: 'breach-candy-mumbai', name: 'Breach Candy Hospital', address: 'Bhulabhai Desai Road, Mumbai', city: 'Mumbai', type: 'Diagnostics', location: { lat: 18.9715, lng: 72.8055 }, rating: 4.3, totalRatings: 1700 },
-        { id: 'jaslok-mumbai', name: 'Jaslok Hospital', address: 'Pedder Road, Mumbai', city: 'Mumbai', type: 'Diagnostics', location: { lat: 18.9734, lng: 72.8095 }, rating: 4.2, totalRatings: 2100 },
-        { id: 'bombay-hospital-mumbai', name: 'Bombay Hospital & Medical Research Centre', address: 'Marine Lines, Mumbai', city: 'Mumbai', type: 'Emergency', location: { lat: 18.9435, lng: 72.8278 }, rating: 4.3, totalRatings: 2800 },
         { id: 'hinduja-mumbai', name: 'P.D. Hinduja National Hospital', address: 'Mahim, Mumbai', city: 'Mumbai', type: 'Emergency', location: { lat: 19.0335, lng: 72.8385 }, rating: 4.4, totalRatings: 3200 },
-        { id: 'tata-memorial-mumbai', name: 'Tata Memorial Hospital', address: 'Parel, Mumbai', city: 'Mumbai', type: 'Emergency', location: { lat: 19.0045, lng: 72.8435 }, rating: 4.7, totalRatings: 6000 },
+        { id: 'ruby-pune', name: 'Ruby Hall Clinic', address: 'Sassoon Road, Pune', city: 'Pune', type: 'Emergency', location: { lat: 18.5312, lng: 73.8612 }, rating: 4.4, totalRatings: 2500 },
+        { id: 'noble-pune', name: 'Noble Hospital', address: 'Hadapsar, Pune', city: 'Pune', type: 'Emergency', location: { lat: 18.5034, lng: 73.9271 }, rating: 4.2, totalRatings: 1100 },
 
-        // Bangalore
-        { id: 'manipal-bangalore', name: 'Manipal Hospital', address: 'Old Airport Road, Bangalore', city: 'Bangalore', type: 'Emergency', location: { lat: 12.9123, lng: 77.6345 }, rating: 4.4, totalRatings: 3800 },
-        { id: 'fortis-bangalore', name: 'Fortis Hospital Bangalore', address: 'Bannerghatta Road, Bangalore', city: 'Bangalore', type: 'Emergency', location: { lat: 12.9010, lng: 77.5980 }, rating: 4.3, totalRatings: 2800 },
+        // Karnataka (Bangalore)
+        { id: 'manipal-bangalore', name: 'Manipal Hospital', address: 'Old Airport Road, Bangalore', city: 'Bangalore', type: 'Emergency', location: { lat: 12.9612, lng: 77.6482 }, rating: 4.4, totalRatings: 3800 },
         { id: 'narayana-bangalore', name: 'Narayana Health City', address: 'Bommasandra, Bangalore', city: 'Bangalore', type: 'Emergency', location: { lat: 12.8123, lng: 77.6945 }, rating: 4.5, totalRatings: 5200 },
-        { id: 'aster-bangalore', name: 'Aster CMI Hospital', address: 'Hebbal, Bangalore', city: 'Bangalore', type: 'Diagnostics', location: { lat: 13.0456, lng: 77.5890 }, rating: 4.4, totalRatings: 1900 },
         { id: 'st-johns-bangalore', name: "St. John's Medical College Hospital", address: 'Koramangala, Bangalore', city: 'Bangalore', type: 'Emergency', location: { lat: 12.9345, lng: 77.6123 }, rating: 4.1, totalRatings: 3400 },
-        { id: 'columbia-asia-bangalore', name: 'Columbia Asia Hospital', address: 'Yeshwanthpur, Bangalore', city: 'Bangalore', type: 'Diagnostics', location: { lat: 13.0234, lng: 77.5567 }, rating: 4.2, totalRatings: 1600 },
-        { id: 'sakra-bangalore', name: 'Sakra World Hospital', address: 'Marathahalli, Bangalore', city: 'Bangalore', type: 'Emergency', location: { lat: 12.9234, lng: 77.6890 }, rating: 4.3, totalRatings: 2100 },
-        { id: 'apollo-bangalore', name: 'Apollo Hospitals Bannerghatta', address: 'Bannerghatta Road, Bangalore', city: 'Bangalore', type: 'Emergency', location: { lat: 12.8945, lng: 77.5989 }, rating: 4.4, totalRatings: 2900 },
+        { id: 'kle-hospital-belgaum', name: 'KLE Society Hospital', address: 'Nehru Nagar, Belgaum', city: 'Belgaum', type: 'Emergency', location: { lat: 15.8712, lng: 74.5213 }, rating: 4.3, totalRatings: 1800 },
 
-        // Chennai
+        // Tamil Nadu (Chennai, Vellore, Coimbatore)
+        { id: 'cmc-vellore', name: 'Christian Medical College (CMC)', address: 'Ida Scudder Road, Vellore', city: 'Vellore', type: 'Emergency', location: { lat: 12.9212, lng: 79.1312 }, rating: 4.8, totalRatings: 8500 },
         { id: 'apollo-chennai', name: 'Apollo Hospital Chennai', address: 'Greams Road, Chennai', city: 'Chennai', type: 'Emergency', location: { lat: 13.0569, lng: 80.2520 }, rating: 4.5, totalRatings: 4200 },
-        { id: 'miot-chennai', name: 'MIOT International', address: 'Manapakkam, Chennai', city: 'Chennai', type: 'Emergency', location: { lat: 13.0123, lng: 80.1789 }, rating: 4.3, totalRatings: 2600 },
-        { id: 'fortis-chennai', name: 'Fortis Malar Hospital', address: 'Adyar, Chennai', city: 'Chennai', type: 'Diagnostics', location: { lat: 13.0045, lng: 80.2523 }, rating: 4.1, totalRatings: 1800 },
-        { id: 'srira-chennai', name: 'Sri Ramachandra Medical Centre', address: 'Porur, Chennai', city: 'Chennai', type: 'Emergency', location: { lat: 13.0345, lng: 80.1456 }, rating: 4.2, totalRatings: 3100 },
-        { id: 'kauvery-chennai', name: 'Kauvery Hospital', address: 'Alwarpet, Chennai', city: 'Chennai', type: 'Diagnostics', location: { lat: 13.0356, lng: 80.2512 }, rating: 4.4, totalRatings: 2200 },
-        { id: 'gleneagles-chennai', name: 'Gleneagles Global Health City', address: 'Perumbakkam, Chennai', city: 'Chennai', type: 'Emergency', location: { lat: 12.9012, lng: 80.2134 }, rating: 4.2, totalRatings: 1900 },
-        { id: 'sims-chennai', name: 'SIMS Hospital', address: 'Vadapalani, Chennai', city: 'Chennai', type: 'Emergency', location: { lat: 13.0512, lng: 80.2112 }, rating: 4.3, totalRatings: 2400 },
-        { id: 'mgm-chennai', name: 'MGM Healthcare', address: 'Aminjikarai, Chennai', city: 'Chennai', type: 'Diagnostics', location: { lat: 13.0712, lng: 80.2312 }, rating: 4.5, totalRatings: 1500 },
+        { id: 'kg-hospital-coimbatore', name: 'KG Hospital', address: 'Race Course Road, Coimbatore', city: 'Coimbatore', type: 'Emergency', location: { lat: 11.0012, lng: 76.9712 }, rating: 4.3, totalRatings: 1900 },
+        { id: 'meenakshi-madurai', name: 'Meenakshi Mission Hospital', address: 'Melur Road, Madurai', city: 'Madurai', type: 'Emergency', location: { lat: 9.9412, lng: 78.1456 }, rating: 4.4, totalRatings: 2100 },
 
-        // Hyderabad
+        // Telangana (Hyderabad)
         { id: 'apollo-hyderabad', name: 'Apollo Hospitals Jubilee Hills', address: 'Jubilee Hills, Hyderabad', city: 'Hyderabad', type: 'Emergency', location: { lat: 17.4123, lng: 78.4123 }, rating: 4.4, totalRatings: 3600 },
         { id: 'yashoda-hyderabad', name: 'Yashoda Hospitals', address: 'Somajiguda, Hyderabad', city: 'Hyderabad', type: 'Emergency', location: { lat: 17.4234, lng: 78.4523 }, rating: 4.3, totalRatings: 3100 },
-        { id: 'care-hyderabad', name: 'CARE Hospitals', address: 'Banjara Hills, Hyderabad', city: 'Hyderabad', type: 'Diagnostics', location: { lat: 17.4123, lng: 78.4412 }, rating: 4.2, totalRatings: 2200 },
-        { id: 'kim-hyderabad', name: 'KIMS Hospitals', address: 'Secunderabad, Hyderabad', city: 'Hyderabad', type: 'Emergency', location: { lat: 17.4456, lng: 78.4890 }, rating: 4.4, totalRatings: 2800 },
-        { id: 'continental-hyderabad', name: 'Continental Hospitals', address: 'Gachibowli, Hyderabad', city: 'Hyderabad', type: 'Diagnostics', location: { lat: 17.4234, lng: 78.3456 }, rating: 4.5, totalRatings: 1700 },
-        { id: 'medicity-hyderabad', name: 'MediCity Hospital', address: 'Adarsh Nagar, Hyderabad', city: 'Hyderabad', type: 'Emergency', location: { lat: 17.4012, lng: 78.4712 }, rating: 3.8, totalRatings: 1400 },
-        { id: 'sunshine-hyderabad', name: 'Sunshine Hospitals', address: 'Secunderabad, Hyderabad', city: 'Hyderabad', type: 'Emergency', location: { lat: 17.4412, lng: 78.4956 }, rating: 4.2, totalRatings: 2100 },
-        { id: 'rainbow-hyderabad', name: "Rainbow Children's Hospital", address: 'Banjara Hills, Hyderabad', city: 'Hyderabad', type: 'Diagnostics', location: { lat: 17.4156, lng: 78.4456 }, rating: 4.4, totalRatings: 2600 },
+        { id: 'nims-hyderabad', name: 'Nizam Institute of Medical Sciences', address: 'Punjagutta, Hyderabad', city: 'Hyderabad', type: 'Emergency', location: { lat: 17.4212, lng: 78.4556 }, rating: 4.5, totalRatings: 5200 },
 
-        // Kolkata
-        { id: 'amri-kolkata', name: 'AMRI Hospitals', address: 'Salt Lake, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.5712, lng: 88.4123 }, rating: 4.1, totalRatings: 2300 },
-        { id: 'rtagore-kolkata', name: 'Rabindranath Tagore International Institute', address: 'Mukundapur, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.4812, lng: 88.3956 }, rating: 4.4, totalRatings: 3800 },
-        { id: 'apollo-kolkata', name: 'Apollo Multispeciality Hospitals', address: 'Canal Circular Road, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.5645, lng: 88.4012 }, rating: 4.3, totalRatings: 2900 },
-        { id: 'fortis-kolkata', name: 'Fortis Hospital Anandapur', address: 'Anandapur, Kolkata', city: 'Kolkata', type: 'Diagnostics', location: { lat: 22.5123, lng: 88.4012 }, rating: 4.2, totalRatings: 2100 },
-        { id: 'peerless-kolkata', name: 'Peerless Hospital', address: 'Panchasayar, Kolkata', city: 'Kolkata', type: 'Diagnostics', location: { lat: 22.4789, lng: 88.3989 }, rating: 4.0, totalRatings: 1900 },
-        { id: 'ruby-kolkata', name: 'Ruby General Hospital', address: 'Kasba, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.5112, lng: 88.4012 }, rating: 3.9, totalRatings: 2400 },
-        { id: 'medica-kolkata', name: 'Medica Superspecialty Hospital', address: 'Mukundapur, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.4845, lng: 88.3989 }, rating: 4.3, totalRatings: 2200 },
-        { id: 'woodlands-kolkata', name: 'Woodlands Multispeciality Hospital', address: 'Alipore, Kolkata', city: 'Kolkata', type: 'Diagnostics', location: { lat: 22.5312, lng: 88.3312 }, rating: 4.4, totalRatings: 1600 },
+        // Andhra Pradesh
+        { id: 'gms-vishwa-vizag', name: 'SevenHills Hospital', address: 'Rockdale Layout, Visakhapatnam', city: 'Visakhapatnam', type: 'Emergency', location: { lat: 17.7123, lng: 83.3123 }, rating: 4.2, totalRatings: 1600 },
+        { id: 'apollo-vijayawada', name: 'Apollo Health City', address: 'Suryaraopeta, Vijayawada', city: 'Vijayawada', type: 'Emergency', location: { lat: 16.5123, lng: 80.6212 }, rating: 4.3, totalRatings: 1800 },
+        { id: 'kims-kurnool', name: 'KIMS Hospital', address: 'Joharapuram Road, Kurnool', city: 'Kurnool', type: 'Emergency', location: { lat: 15.8212, lng: 78.0312 }, rating: 4.1, totalRatings: 900 },
 
-        // State Capitals / Famous (Odisha, Bihar, etc.)
+        // Kerala
+        { id: 'amrita-kochi', name: 'Amrita Hospital', address: 'Ponekkara, Kochi', city: 'Kochi', type: 'Emergency', location: { lat: 10.0312, lng: 76.2912 }, rating: 4.7, totalRatings: 3900 },
+        { id: 'aster-kochi', name: 'Aster Medcity', address: 'Cheranalloor, Kochi', city: 'Kochi', type: 'Diagnostics', location: { lat: 10.0512, lng: 76.2612 }, rating: 4.6, totalRatings: 1900 },
+        { id: 'baby-memorial-kozhikode', name: 'Baby Memorial Hospital', address: 'Indira Gandhi Road, Kozhikode', city: 'Kozhikode', type: 'Emergency', location: { lat: 11.2612, lng: 75.7890 }, rating: 4.4, totalRatings: 2200 },
+
+        // Odisha
         { id: 'kims-odisha', name: 'Kalinga Institute of Medical Sciences (KIMS)', address: 'Kushabhadra, Bhubaneswar', city: 'Bhubaneswar', type: 'Emergency', location: { lat: 20.3533, lng: 85.8189 }, rating: 4.5, totalRatings: 3200 },
         { id: 'aiims-bhubaneswar', name: 'AIIMS Bhubaneswar', address: 'Sijua, Dumuduma, Bhubaneswar', city: 'Bhubaneswar', type: 'Emergency', location: { lat: 20.2312, lng: 85.7712 }, rating: 4.6, totalRatings: 4800 },
-        { id: 'scb-cuttack', name: 'SCB Medical College & Hospital', address: 'Manglabag, Cuttack', city: 'Cuttack', type: 'Emergency', location: { lat: 20.4712, lng: 85.8812 }, rating: 4.2, totalRatings: 2900 },
-        { id: 'aiims-patna', name: 'AIIMS Patna', address: 'Phulwari Sharif, Patna', city: 'Patna', type: 'Emergency', location: { lat: 25.5612, lng: 85.0812 }, rating: 4.4, totalRatings: 3500 },
-        { id: 'sms-jaipur', name: 'Sawai Mansingh (SMS) Hospital', address: 'JLN Marg, Jaipur', city: 'Jaipur', type: 'Emergency', location: { lat: 26.9012, lng: 75.8112 }, rating: 4.0, totalRatings: 4200 },
-        { id: 'civil-ahmedabad', name: 'Civil Hospital Ahmedabad', address: 'Asarwa, Ahmedabad', city: 'Ahmedabad', type: 'Emergency', location: { lat: 23.0512, lng: 72.6012 }, rating: 4.1, totalRatings: 5500 },
-        { id: 'amrita-kochi', name: 'Amrita Hospital', address: 'Ponekkara, Kochi', city: 'Kochi', type: 'Emergency', location: { lat: 10.0312, lng: 76.2912 }, rating: 4.7, totalRatings: 3900 },
-        { id: 'cmc-vellore', name: 'Christian Medical College (CMC)', address: 'Ida Scudder Road, Vellore', city: 'Vellore', type: 'Emergency', location: { lat: 12.9212, lng: 79.1312 }, rating: 4.8, totalRatings: 8500 },
-        { id: 'sgpgi-lucknow', name: 'Sanjay Gandhi PGI', address: 'Raebareli Road, Lucknow', city: 'Lucknow', type: 'Emergency', location: { lat: 26.7512, lng: 80.9312 }, rating: 4.5, totalRatings: 4100 },
-        { id: 'pgimer-chandigarh', name: 'PGIMER Chandigarh', address: 'Sector 12, Chandigarh', city: 'Chandigarh', type: 'Emergency', location: { lat: 30.7612, lng: 76.7712 }, rating: 4.6, totalRatings: 5200 },
+        { id: 'ashwini-cuttack', name: 'Ashwini Hospital', address: 'Sector 1, Cuttack', city: 'Cuttack', type: 'Emergency', location: { lat: 20.4812, lng: 85.8612 }, rating: 4.3, totalRatings: 1400 },
 
-        // Additional to exceed 60
+        // West Bengal
+        { id: 'apollo-kolkata', name: 'Apollo Multispeciality Hospitals', address: 'Canal Circular Road, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.5645, lng: 88.4012 }, rating: 4.3, totalRatings: 2900 },
+        { id: 'rtagore-kolkata', name: 'Rabindranath Tagore Hospital', address: 'Mukundapur, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.4812, lng: 88.3956 }, rating: 4.4, totalRatings: 3800 },
+        { id: 'sskm-kolkata', name: 'SSKM Hospital (PGH)', address: 'AJC Bose Road, Kolkata', city: 'Kolkata', type: 'Emergency', location: { lat: 22.5389, lng: 88.3444 }, rating: 4.5, totalRatings: 6200 },
+
+        // Bihar & Jharkhand
+        { id: 'aiims-patna', name: 'AIIMS Patna', address: 'Phulwari Sharif, Patna', city: 'Patna', type: 'Emergency', location: { lat: 25.5612, lng: 85.0812 }, rating: 4.4, totalRatings: 3500 },
+        { id: 'paras-hmri-patna', name: 'Paras HMRI Hospital', address: 'Bailey Road, Patna', city: 'Patna', type: 'Emergency', location: { lat: 25.6123, lng: 85.0912 }, rating: 4.1, totalRatings: 2100 },
+        { id: 'rims-ranchi', name: 'RIMS Ranchi', address: 'Bariatu, Ranchi', city: 'Ranchi', type: 'Emergency', location: { lat: 23.3890, lng: 85.3512 }, rating: 4.2, totalRatings: 3200 },
+        { id: 'tata-main-jamshedpur', name: 'Tata Main Hospital (TMH)', address: 'Bistupur, Jamshedpur', city: 'Jamshedpur', type: 'Emergency', location: { lat: 22.8012, lng: 86.1912 }, rating: 4.5, totalRatings: 4100 },
+
+        // Uttar Pradesh
+        { id: 'sgpgi-lucknow', name: 'Sanjay Gandhi PGI', address: 'Raebareli Road, Lucknow', city: 'Lucknow', type: 'Emergency', location: { lat: 26.7512, lng: 80.9312 }, rating: 4.5, totalRatings: 4100 },
+        { id: 'kora-vns-hospital', name: 'Heritage Hospital', address: 'Lanka, Varanasi', city: 'Varanasi', type: 'Emergency', location: { lat: 25.2612, lng: 82.9912 }, rating: 4.2, totalRatings: 1800 },
+        { id: 'apollo-medics-lucknow', name: 'Apollomedics Super Speciality', address: 'Kanpur Road, Lucknow', city: 'Lucknow', type: 'Emergency', location: { lat: 26.7912, lng: 80.9112 }, rating: 4.3, totalRatings: 1200 },
+        { id: 'regency-hospital-kanpur', name: 'Regency Hospital', address: 'Sarvodaya Nagar, Kanpur', city: 'Kanpur', type: 'Emergency', location: { lat: 26.4712, lng: 80.3112 }, rating: 4.4, totalRatings: 2500 },
+
+        // Rajasthan & Gujarat
+        { id: 'sms-jaipur', name: 'Sawai Mansingh (SMS) Hospital', address: 'JLN Marg, Jaipur', city: 'Jaipur', type: 'Emergency', location: { lat: 26.9012, lng: 75.8112 }, rating: 4.0, totalRatings: 4200 },
+        { id: 'eternal-jaipur', name: 'Eternal Hospital', address: 'Malviya Nagar, Jaipur', city: 'Jaipur', type: 'Emergency', location: { lat: 26.8412, lng: 75.8012 }, rating: 4.5, totalRatings: 1800 },
+        { id: 'civil-ahmedabad', name: 'Civil Hospital Ahmedabad', address: 'Asarwa, Ahmedabad', city: 'Ahmedabad', type: 'Emergency', location: { lat: 23.0512, lng: 72.6012 }, rating: 4.1, totalRatings: 5500 },
+        { id: 'zydus-ahmedabad', name: 'Zydus Hospital', address: 'Thaltej, Ahmedabad', city: 'Ahmedabad', type: 'Diagnostics', location: { lat: 23.0612, lng: 72.5112 }, rating: 4.5, totalRatings: 1600 },
+
+        // Madhya Pradesh & Chhattisgarh
+        { id: 'choithram-indore', name: 'Choithram Hospital', address: 'Manik Bagh Road, Indore', city: 'Indore', type: 'Emergency', location: { lat: 22.6912, lng: 75.8512 }, rating: 4.2, totalRatings: 2800 },
+        { id: 'aiims-bhopal', name: 'AIIMS Bhopal', address: 'Saket Nagar, Bhopal', city: 'Bhopal', type: 'Emergency', location: { lat: 23.2012, lng: 77.4512 }, rating: 4.4, totalRatings: 3400 },
+        { id: 'aiims-raipur', name: 'AIIMS Raipur', address: 'Tatibandh, Raipur', city: 'Raipur', type: 'Emergency', location: { lat: 21.2512, lng: 81.5812 }, rating: 4.5, totalRatings: 2900 },
+        { id: 'ramkrishna-raipur', name: 'Ramkrishna Care Hospital', address: 'Aurobindo Enclave, Raipur', city: 'Raipur', type: 'Emergency', location: { lat: 21.2312, lng: 81.6512 }, rating: 4.3, totalRatings: 1600 },
+
+        // Punjab, Haryana & Chandigarh
+        { id: 'pgimer-chandigarh', name: 'PGIMER Chandigarh', address: 'Sector 12, Chandigarh', city: 'Chandigarh', type: 'Emergency', location: { lat: 30.7612, lng: 76.7712 }, rating: 4.6, totalRatings: 5200 },
+        { id: 'fortis-mohali', name: 'Fortis Hospital Mohali', address: 'Sector 62, Mohali', city: 'Mohali', type: 'Emergency', location: { lat: 30.6912, lng: 76.7345 }, rating: 4.4, totalRatings: 2800 },
+        { id: 'medanta-gurgaon', name: 'Medanta - The Medicity', address: 'Sector 38, Gurgaon', city: 'Gurgaon', type: 'Emergency', location: { lat: 28.4234, lng: 77.0312 }, rating: 4.6, totalRatings: 4800 },
+        { id: 'artemis-gurgaon', name: 'Artemis Hospital', address: 'Sector 51, Gurgaon', city: 'Gurgaon', type: 'Diagnostics', location: { lat: 28.4312, lng: 77.0612 }, rating: 4.2, totalRatings: 1900 },
+
+        // Uttarakhand & Himachal
+        { id: 'max-dehradun', name: 'Max Super Speciality Hospital', address: 'Makkawala, Dehradun', city: 'Dehradun', type: 'Emergency', location: { lat: 30.3412, lng: 78.0412 }, rating: 4.4, totalRatings: 1500 },
+        { id: 'aiims-rishikesh', name: 'AIIMS Rishikesh', address: 'Virbhadra Road, Rishikesh', city: 'Rishikesh', type: 'Emergency', location: { lat: 30.1212, lng: 78.2912 }, rating: 4.7, totalRatings: 3100 },
+        { id: 'igmc-shimla', name: 'Indira Gandhi Medical College (IGMC)', address: 'Lakkar Bazar, Shimla', city: 'Shimla', type: 'Emergency', location: { lat: 31.1012, lng: 77.1712 }, rating: 4.2, totalRatings: 2400 },
+        { id: 'fortis-kangra', name: 'Fortis Hospital Kangra', address: 'Dharamsala Road, Kangra', city: 'Kangra', type: 'Emergency', location: { lat: 32.1012, lng: 76.2712 }, rating: 4.1, totalRatings: 1100 },
+
+        // North East (Assam, Meghalaya, etc.)
+        { id: 'guwahati-med-college', name: 'Guwahati Medical College', address: 'Bhangagarh, Guwahati', city: 'Guwahati', type: 'Emergency', location: { lat: 26.1512, lng: 91.7712 }, rating: 4.1, totalRatings: 3200 },
+        { id: 'gnrc-guwahati', name: 'GNRC Hospital', address: 'Dispur, Guwahati', city: 'Guwahati', type: 'Emergency', location: { lat: 26.1412, lng: 91.7912 }, rating: 4.3, totalRatings: 2100 },
+        { id: 'neigrihms-shillong', name: 'NEIGRIHMS', address: 'Mawdiangdiang, Shillong', city: 'Shillong', type: 'Emergency', location: { lat: 25.5912, lng: 91.9312 }, rating: 4.5, totalRatings: 2600 },
+        { id: 'rims-imphal', name: 'RIMS Imphal', address: 'Lamphelpat, Imphal', city: 'Imphal', type: 'Emergency', location: { lat: 24.8112, lng: 93.9212 }, rating: 4.2, totalRatings: 1900 },
+
+        // Other States (Goa, Tripura, etc.)
+        { id: 'goa-med-college', name: 'Goa Medical College (GMC)', address: 'Bambolim, Goa', city: 'Goa', type: 'Emergency', location: { lat: 15.4512, lng: 73.8512 }, rating: 4.1, totalRatings: 4200 },
+        { id: 'victor-goa', name: 'Victor Hospital', address: 'Malbhat, Margao', city: 'Margao', type: 'Emergency', location: { lat: 15.2812, lng: 73.9612 }, rating: 4.3, totalRatings: 1100 },
+        { id: 'agartala-med-college', name: 'Agartala Government Medical College', address: 'Kunjaban, Agartala', city: 'Agartala', type: 'Emergency', location: { lat: 23.8512, lng: 91.2812 }, rating: 4.0, totalRatings: 1500 },
+
+        // Jammu & Kashmir & Ladakh
+        { id: 'skims-srinagar', name: 'SKIMS Srinagar', address: 'Soura, Srinagar', city: 'Srinagar', type: 'Emergency', location: { lat: 34.1312, lng: 74.8012 }, rating: 4.3, totalRatings: 3800 },
+        { id: 'gmc-jammu', name: 'Government Medical College (GMC)', address: 'Bakshi Nagar, Jammu', city: 'Jammu', type: 'Emergency', location: { lat: 32.7312, lng: 74.8512 }, rating: 4.1, totalRatings: 2100 },
+        { id: 'snm-hospital-leh', name: 'SNM Hospital Leh', address: 'Leh City, Ladakh', city: 'Leh', type: 'Emergency', location: { lat: 34.1612, lng: 77.5612 }, rating: 4.5, totalRatings: 800 },
+
+        // Union Territories (Puducherry, A&N)
         { id: 'jipmer-puducherry', name: 'JIPMER', address: 'Dhanvantari Nagar, Puducherry', city: 'Puducherry', type: 'Emergency', location: { lat: 11.9512, lng: 79.8012 }, rating: 4.5, totalRatings: 3800 },
-        { id: 'tata-kolkata', name: 'Tata Medical Center', address: 'New Town, Kolkata', city: 'Kolkata', type: 'Diagnostics', location: { lat: 22.5812, lng: 88.4812 }, rating: 4.7, totalRatings: 2100 },
-        { id: 'sahyadri-pune', name: 'Sahyadri Super Speciality Hospital', address: 'Deccan Gymkhana, Pune', city: 'Pune', type: 'Emergency', location: { lat: 18.5212, lng: 73.8412 }, rating: 4.3, totalRatings: 1800 },
-        { id: 'ruby-pune', name: 'Ruby Hall Clinic', address: 'Sassoon Road, Pune', city: 'Pune', type: 'Emergency', location: { lat: 18.5312, lng: 73.8612 }, rating: 4.4, totalRatings: 2500 },
-        { id: 'aster-kochi', name: 'Aster Medcity', address: 'Cheranalloor, Kochi', city: 'Kochi', type: 'Diagnostics', location: { lat: 10.0512, lng: 76.2612 }, rating: 4.6, totalRatings: 1900 },
-        { id: 'zydus-ahmedabad', name: 'Zydus Hospital', address: 'Thaltej, Ahmedabad', city: 'Ahmedabad', type: 'Diagnostics', location: { lat: 23.0612, lng: 72.5112 }, rating: 4.5, totalRatings: 1600 }
+        { id: 'gb-pant-port-blair', name: 'G.B. Pant Hospital', address: 'Atlanta Point, Port Blair', city: 'Port Blair', type: 'Emergency', location: { lat: 11.6712, lng: 92.7412 }, rating: 4.2, totalRatings: 1200 },
+        { id: 'vinayaka-mission-karaikal', name: 'Vinayaka Mission Medical College', address: 'Keezhakasakudy, Karaikal', city: 'Karaikal', type: 'Emergency', location: { lat: 10.9512, lng: 79.8312 }, rating: 4.1, totalRatings: 600 },
+
+        // Remaining AIIMS & Requested Odisha Hospitals
+        { id: 'aiims-jodhpur', name: 'AIIMS Jodhpur', address: 'Basni Industrial Area Phase 2, Jodhpur', city: 'Jodhpur', type: 'Emergency', location: { lat: 26.2389, lng: 73.0052 }, rating: 4.6, totalRatings: 2800 },
+        { id: 'aiims-gorakhpur', name: 'AIIMS Gorakhpur', address: 'Kunaun, Gorakhpur', city: 'Gorakhpur', type: 'Emergency', location: { lat: 26.7465, lng: 83.4198 }, rating: 4.3, totalRatings: 1200 },
+        { id: 'aiims-kalyani', name: 'AIIMS Kalyani', address: 'NH-34, Kalyani', city: 'Kalyani', type: 'Emergency', location: { lat: 22.9754, lng: 88.5284 }, rating: 4.4, totalRatings: 1500 },
+        { id: 'aiims-bathinda', name: 'AIIMS Bathinda', address: 'Mansa Road, Bathinda', city: 'Bathinda', type: 'Emergency', location: { lat: 30.1617, lng: 74.9263 }, rating: 4.5, totalRatings: 900 },
+        { id: 'aiims-bilaspur-hp', name: 'AIIMS Bilaspur (HP)', address: 'Kothipura, Bilaspur', city: 'Bilaspur', type: 'Emergency', location: { lat: 31.3212, lng: 76.7612 }, rating: 4.4, totalRatings: 700 },
+        { id: 'aiims-madurai', name: 'AIIMS Madurai', address: 'Thoppur, Madurai', city: 'Madurai', type: 'Emergency', location: { lat: 9.8870, lng: 77.9994 }, rating: 4.2, totalRatings: 500 },
+        { id: 'aiims-guwahati', name: 'AIIMS Guwahati', address: 'Changsari, Guwahati', city: 'Guwahati', type: 'Emergency', location: { lat: 26.2523, lng: 91.6956 }, rating: 4.3, totalRatings: 600 },
+        { id: 'aiims-rajkot', name: 'AIIMS Rajkot', address: 'Khanderi, Rajkot', city: 'Rajkot', type: 'Emergency', location: { lat: 22.3512, lng: 70.7812 }, rating: 4.4, totalRatings: 400 },
+        { id: 'aiims-nagpur', name: 'AIIMS Nagpur', address: 'MIHAN, Nagpur', city: 'Nagpur', type: 'Emergency', location: { lat: 21.0386, lng: 79.0238 }, rating: 4.6, totalRatings: 1100 },
+        { id: 'aiims-bibinagar', name: 'AIIMS Bibinagar', address: 'Bibinagar, Yadadri Bhuvanagiri', city: 'Bibinagar', type: 'Emergency', location: { lat: 17.4710, lng: 78.7780 }, rating: 4.1, totalRatings: 850 },
+        { id: 'aiims-deoghar', name: 'AIIMS Deoghar', address: 'Devipur, Deoghar', city: 'Deoghar', type: 'Emergency', location: { lat: 24.4361, lng: 86.6138 }, rating: 4.3, totalRatings: 950 },
+        { id: 'aiims-mangalagiri', name: 'AIIMS Mangalagiri', address: 'Mangalagiri, Guntur', city: 'Mangalagiri', type: 'Emergency', location: { lat: 16.4462, lng: 80.5802 }, rating: 4.5, totalRatings: 1300 },
+        { id: 'aiims-raebareli', name: 'AIIMS Raebareli', address: 'Munshiganj, Raebareli', city: 'Raebareli', type: 'Emergency', location: { lat: 26.2235, lng: 81.2412 }, rating: 4.2, totalRatings: 1400 },
+        { id: 'scb-cuttack', name: 'SCB Medical College & Hospital', address: 'Mangalabag, Cuttack', city: 'Cuttack', type: 'Emergency', location: { lat: 20.4733, lng: 85.8916 }, rating: 4.1, totalRatings: 5200 },
+        { id: 'sum-bhubaneswar', name: 'IMS & SUM Hospital', address: 'K8, Kalinga Nagar, Bhubaneswar', city: 'Bhubaneswar', type: 'Emergency', location: { lat: 20.2829, lng: 85.7695 }, rating: 4.3, totalRatings: 3200 }
+
     ];
 
     // Seed established hospitals first
@@ -523,12 +567,59 @@ app.post('/api/queue/call-in', (req, res) => {
     res.json({ success: true });
 });
 
+// Symptom Checker ML Bot endpoint (proxies to Flask LSTM bot on port 5001)
+app.post('/api/symptom-check', async (req, res) => {
+    const { message } = req.body;
+    if (!message) return res.status(400).json({ error: 'No message provided' });
+    try {
+        const mlRes = await fetch('http://localhost:5001/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        if (!mlRes.ok) throw new Error(`ML bot returned ${mlRes.status}`);
+        const data = await mlRes.json();
+        const answer = data.answer;
+        let replyText = '';
+        if (!Array.isArray(answer)) {
+            replyText = "I'm not sure. Could you describe your symptoms more clearly?";
+        } else if (answer[0] === 'not_understand') {
+            replyText = typeof answer[1] === 'string' ? answer[1] : "I didn't understand. Please list symptoms separated by commas (e.g. 'fever, cough, headache').";
+        } else if (answer[0] === 'center') {
+            const centers = answer.slice(1);
+            replyText = "📍 Nearest Medical Centers to You:\n\n" +
+                centers.map((c, i) => `${i + 1}. ${c[0]} — ${c[1]}\n   📌 ${c[2]}`).join('\n\n');
+        } else {
+            const tag = answer[0];
+            const response = Array.isArray(answer[1]) ? answer[1][Math.floor(Math.random() * answer[1].length)] : answer[1];
+            const precaution = answer[2];
+            const clean = (str) => str ? str.replace(/<br>/g, '\n').replace(/<[^>]+>/g, '') : '';
+            replyText = `🩺 ${tag}\n\n${clean(response)}`;
+            if (precaution) replyText += `\n\n⚠️ Preventive Measures:\n${clean(precaution)}`;
+            replyText += '\n\n⚕️ Disclaimer: I am an AI assistant, not a doctor. Please consult a healthcare professional.';
+        }
+        res.json({ message: { role: 'assistant', content: replyText } });
+    } catch (error) {
+        console.warn('⚠️ ML Symptom Bot unavailable, using keyword fallback:', error.message);
+        const msg = message.toLowerCase();
+        let fallback = "Please list your symptoms clearly (e.g. 'fever, headache, cough') and I'll identify possible conditions.";
+        if (msg.includes('fever') || msg.includes('temperature')) fallback = "🌡️ Fever suggests your body is fighting an infection. Stay hydrated and rest. If above 102°F (39°C), visit Emergency.";
+        else if (msg.includes('chest pain') || msg.includes('heart')) fallback = "🚨 URGENT: Chest pain may indicate a cardiac event. Go to Emergency immediately.";
+        else if (msg.includes('headache') || msg.includes('migraine')) fallback = "🧠 Headaches are often from stress, dehydration, or eye strain. Rest and hydrate. Seek care if sudden/severe.";
+        else if (msg.includes('cough') || msg.includes('cold')) fallback = "😷 Usually viral. Gargle warm salt water, rest, hydrate. Visit OPD if worsening after 3 days.";
+        else if (msg.includes('breath')) fallback = "🚨 Difficulty breathing needs immediate attention. Go to Emergency now.";
+        else if (msg.includes('stomach') || msg.includes('nausea') || msg.includes('vomit')) fallback = "🤢 Take ORS, avoid spicy food, rest. Visit OPD if severe or lasting over 24 hours.";
+        res.json({ message: { role: 'assistant', content: fallback } });
+    }
+});
+
 // AI Chat endpoint
 app.post('/api/chat', async (req, res) => {
+
     try {
         const { messages, systemPrompt, domain = 'health' } = req.body;
 
-        const openai = domain === 'education' ? openaiEdu : openaiHealth;
+        const openai = openaiHealth;
 
         const completion = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
@@ -541,37 +632,62 @@ app.post('/api/chat', async (req, res) => {
 
         res.json({ message: completion.choices[0].message });
     } catch (error) {
-        console.error('OpenAI Error:', error);
+        console.error('OpenAI Error:', error.message || error);
+        console.warn('⚠️ Switching to Smart Offline AI Response');
 
-        // Mock Fallback for Demo Purposes
-        console.warn('⚠️ Switching to Mock AI Response due to API error');
+        const { messages, systemPrompt = '' } = req.body;
+        const lastUserMsg = messages && messages.length > 0
+            ? messages[messages.length - 1].content.toLowerCase()
+            : '';
 
-        const { messages, systemPrompt } = req.body;
+        let mockReply = "I'm here to help! Could you please describe your concern in a bit more detail?";
 
-        // Determine domain context from system prompt
-        let mockReply = "I am currently operating in offline mode. How can I assist you?";
+        // --- HEALTH DOMAIN: Symptom Checker ---
+        // Detect by 'triage', 'medical', 'MedQueue' in system prompt
+        const isHealth = systemPrompt.toLowerCase().includes('triage') ||
+                         systemPrompt.toLowerCase().includes('medical') ||
+                         systemPrompt.toLowerCase().includes('medqueue');
 
-        if (systemPrompt && systemPrompt.includes('medical')) {
-            mockReply = "Based on your description, this sounds like it might be a mild viral infection or seasonal flu. However, since I am an AI, I recommend visiting a General Physician if symptoms persist for more than 24 hours. Would you like me to book an appointment?";
+        if (isHealth) {
+            // Default health response
+            mockReply = "Based on your description, this could be a common ailment. Please monitor your symptoms and consult a General Physician if they persist beyond 24 hours. Would you like to book a token at a nearby hospital?";
 
-            // Context-aware mocks
-            const lastUserMsg = messages && messages.length > 0 ? messages[messages.length - 1].content.toLowerCase() : "";
-            if (lastUserMsg.includes('fever')) mockReply = "A fever indicates your body is fighting an infection. Stay hydrated and rest. If it exceeds 102°F (39°C), please visit the Emergency ward immediately.";
-            if (lastUserMsg.includes('headache')) mockReply = "Headaches can be caused by stress, dehydration, or eye strain. Try drinking water and resting in a dark room. If it's severe or sudden, seek medical help.";
-            if (lastUserMsg.includes('chest pain')) mockReply = "⚠️ Chest pain can be serious. Please visit the Emergency Department immediately or call for an ambulance.";
-        }
-        else if (systemPrompt && systemPrompt.includes('Career Mentor')) {
-            mockReply = "That's a great question! Based on your logical aptitude, you might excel in fields like Data Science, Software Engineering, or Financial Analytics. Have you considered exploring Python or R programming?";
+            // Symptom-specific responses
+            if (lastUserMsg.includes('fever') || lastUserMsg.includes('temperature'))
+                mockReply = "🌡️ A fever means your body is fighting an infection. Stay hydrated, take rest, and use a cold compress. If your temperature exceeds 102°F (39°C) or persists beyond 2 days, visit the Emergency ward immediately.";
+            else if (lastUserMsg.includes('chest pain') || lastUserMsg.includes('chest ache') || lastUserMsg.includes('heart'))
+                mockReply = "🚨 URGENT: Chest pain can indicate a cardiac event. Please visit the Emergency Department immediately or call an ambulance. Do not wait. Sit calmly and avoid physical exertion.";
+            else if (lastUserMsg.includes('headache') || lastUserMsg.includes('migraine'))
+                mockReply = "🧠 Headaches are often caused by stress, dehydration, or eye strain. Drink water, rest in a quiet dark room, and avoid screens. If the headache is sudden, severe, or with vision changes, seek Emergency care.";
+            else if (lastUserMsg.includes('cough') || lastUserMsg.includes('cold') || lastUserMsg.includes('sore throat'))
+                mockReply = "😷 A cough or sore throat is usually viral. Stay hydrated, gargle with warm salt water, and rest. If you have difficulty breathing or symptoms worsen after 3 days, please visit OPD.";
+            else if (lastUserMsg.includes('breathe') || lastUserMsg.includes('breath') || lastUserMsg.includes('shortness') || lastUserMsg.includes('suffocating'))
+                mockReply = "🚨 Difficulty breathing requires immediate attention. Please go to the Emergency ward right away or call emergency services. Sit upright and try to stay calm while help is on the way.";
+            else if (lastUserMsg.includes('stomach') || lastUserMsg.includes('abdomen') || lastUserMsg.includes('nausea') || lastUserMsg.includes('vomit'))
+                mockReply = "🤢 Stomach issues may be caused by food poisoning, indigestion, or infection. Stay hydrated with ORS solution, avoid spicy food, and rest. If pain is severe or vomiting is persistent, visit the OPD.";
+            else if (lastUserMsg.includes('diarrhea') || lastUserMsg.includes('loose motion'))
+                mockReply = "💧 Diarrhea can lead to dehydration. Drink plenty of fluids and ORS. Avoid dairy and oily food for 24 hours. If blood is present or you feel very weak, visit the OPD immediately.";
+            else if (lastUserMsg.includes('dizzy') || lastUserMsg.includes('dizziness') || lastUserMsg.includes('vertigo') || lastUserMsg.includes('faint'))
+                mockReply = "😵 Dizziness can be caused by dehydration, low blood pressure, or inner ear issues. Sit or lie down, drink water slowly. If it's recurring or accompanied by vomiting/blurred vision, visit the OPD.";
+            else if (lastUserMsg.includes('rash') || lastUserMsg.includes('skin') || lastUserMsg.includes('itch') || lastUserMsg.includes('allergy'))
+                mockReply = "🔴 Skin rashes are commonly allergic or viral. Avoid scratching, apply calamine lotion if available, and avoid known allergens. If the rash spreads quickly or you have swelling, visit the OPD.";
+            else if (lastUserMsg.includes('back pain') || lastUserMsg.includes('spine') || lastUserMsg.includes('lower back'))
+                mockReply = "🦴 Back pain is often from posture or muscle strain. Rest, apply a heat pad, and avoid lifting heavy objects. If pain radiates to your leg or you have numbness, visit an Orthopedic specialist.";
+            else if (lastUserMsg.includes('eye') || lastUserMsg.includes('vision') || lastUserMsg.includes('blur'))
+                mockReply = "👁️ Eye symptoms need attention. Avoid rubbing your eyes. If you have sudden vision loss, extreme redness, or eye pain, visit the Emergency Department. Otherwise, schedule an appointment at OPD.";
+            else if (lastUserMsg.includes('anxiety') || lastUserMsg.includes('panic') || lastUserMsg.includes('stress') || lastUserMsg.includes('mental'))
+                mockReply = "🧘 Mental health matters. Take slow deep breaths — 4 counts in, hold for 4, out for 4. You're not alone. Consider speaking to a counselor or Mental Health OPD. I'm here to listen if you'd like to share more.";
+            else if (lastUserMsg.includes('diabetes') || lastUserMsg.includes('sugar') || lastUserMsg.includes('insulin'))
+                mockReply = "🩸 For diabetic concerns, monitor your blood sugar levels closely. Stay on your prescribed medications and avoid sugary foods. If you feel extremely weak or confused, visit the Emergency ward.";
+            else if (lastUserMsg.includes('injury') || lastUserMsg.includes('fracture') || lastUserMsg.includes('broken') || lastUserMsg.includes('wound'))
+                mockReply = "🩹 For injuries, apply pressure to stop bleeding and immobilize the area. For suspected fractures, do not move the limb. Please visit the Emergency or Orthopedic OPD for proper assessment.";
 
-            const lastUserMsg = messages && messages.length > 0 ? messages[messages.length - 1].content.toLowerCase() : "";
-            if (lastUserMsg.includes('college')) mockReply = "For your profile, I'd recommend top technical institutes like IITs, NITs, or IIITs. Look for programs with strong placement records in tech sectors.";
-            if (lastUserMsg.includes('scholarship')) mockReply = "There are several scholarships available! Check out the 'Merit Scholarship 2026' and 'Tech Innovators Grant' in your dashboard.";
         }
 
         res.json({
             message: {
                 role: 'assistant',
-                content: mockReply + " [Note: Response generated by Offline Backup Core]"
+                content: mockReply
             }
         });
     }
@@ -602,21 +718,6 @@ app.post('/api/predict-wait-time', async (req, res) => {
     }
 });
 
-app.post('/api/predict-career', async (req, res) => {
-    try {
-        const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
-        const response = await fetch(`${ML_SERVICE_URL}/predict/career-match`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(req.body)
-        });
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error('ML Service Error:', error);
-        res.status(500).json({ error: 'ML service unavailable' });
-    }
-});
 
 // Send SMS notification
 app.post('/api/send-notification', async (req, res) => {
